@@ -1,6 +1,7 @@
 import AdminSettings from "../models/AdminSettings";
 
 export const buildNewsFilterQuery = async (filters: any) => {
+  console.log("fileters=================",filters)
   const query: any = {
     isHidden: false, 
   };

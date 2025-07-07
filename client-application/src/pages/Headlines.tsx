@@ -19,9 +19,24 @@ const Headlines: React.FC = () => {
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [category, setCategory] = useState("all");
+  const [categories, setCategories] = useState<string[]>([]);
+
 
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("/admin/categories");
+        setCategories(response.data.categories || []);
+      } catch (error) {
+        console.error("Failed to fetch categories", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const fetchHeadlines = async () => {
     setLoading(true);
@@ -184,10 +199,11 @@ const Headlines: React.FC = () => {
             className="border rounded px-3 py-2 w-full md:w-auto"
           >
             <option value="all">All</option>
-            <option value="business">Business</option>
-            <option value="entertainment">Entertainment</option>
-            <option value="sports">Sports</option>
-            <option value="technology">Technology</option>
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </option>
+            ))}
           </select>
 
           <button

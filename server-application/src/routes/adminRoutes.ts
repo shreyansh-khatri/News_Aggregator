@@ -28,12 +28,6 @@ router.post(
   adminOnly,
   AdminController.createCategory
 );
-router.post(
-  "/servers/seed",
-  authMiddleware,
-  adminOnly,
-  AdminController.seedExternalServers
-);
 
 router.get("/settings", authMiddleware,adminOnly, AdminController.getSettings);
 router.put("/settings", authMiddleware,adminOnly, AdminController.updateSettings);
@@ -54,7 +48,7 @@ router.post(
 router.get(
   "/categories",
   authMiddleware,
-  adminOnly,
+  // adminOnly,
   AdminController.getAllCategories
 );
 
@@ -78,6 +72,8 @@ router.put(
   adminOnly,
   AdminController.updateBlockedKeywords
 );
+
+router.get("/categories", AdminController.getAllCategories);
 
 
 export default router;

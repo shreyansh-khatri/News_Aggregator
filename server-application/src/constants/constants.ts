@@ -1,7 +1,7 @@
 export const STATUS = {
   ACTIVE: "active",
   INACTIVE: "inactive",
-};
+}as const;
 
 export const MESSAGES = {
   SERVER_UPDATED: "Server updated successfully",

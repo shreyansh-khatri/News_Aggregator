@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
-import SavedArticle from "../models/SavedArticle";
-import News from "../models/News";
 import { HTTP_STATUS, MESSAGES } from "../constants/constants";
+import SavedArticleService from "../services/SavedArticleService";
 
 interface AuthenticatedRequest extends Request {
   user?: { id: string };
@@ -13,28 +12,18 @@ class SavedArticleController {
     const userId = req.user?.id;
 
     try {
-      const article = await News.findById(articleId);
-      if (!article) {
-        res
-          .status(HTTP_STATUS.NOT_FOUND)
-          .json({ message: MESSAGES.ARTICLE_NOT_FOUND });
-        return;
-      }
-
-      const exists = await SavedArticle.findOne({ userId, articleId });
-      if (exists) {
-        res
-          .status(HTTP_STATUS.BAD_REQUEST)
-          .json({ message: MESSAGES.ARTICLE_ALREADY_SAVED });
-        return;
-      }
-
-      await SavedArticle.create({ userId, articleId });
-      res.status(HTTP_STATUS.CREATED).json({ message: MESSAGES.ARTICLE_SAVED });
-    } catch (err) {
+      const message = await SavedArticleService.saveArticleForUser(
+        userId!,
+        articleId
+      );
+      res.status(HTTP_STATUS.CREATED).json({ message });
+    } catch (err: any) {
       res
         .status(HTTP_STATUS.SERVER_ERROR)
-        .json({ message: MESSAGES.ARTICLE_SAVE_ERROR, error: err });
+        .json({
+          message: err.message || MESSAGES.ARTICLE_SAVE_ERROR,
+          error: err,
+        });
     }
   }
 
@@ -46,23 +35,18 @@ class SavedArticleController {
     const userId = req.user?.id;
 
     try {
-      const deleted = await SavedArticle.findOneAndDelete({
-        userId,
-        articleId,
-      });
-
-      if (!deleted) {
-        res
-          .status(HTTP_STATUS.NOT_FOUND)
-          .json({ message: MESSAGES.SAVED_NOT_FOUND });
-        return;
-      }
-
-      res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ARTICLE_DELETED });
-    } catch (err) {
+      const message = await SavedArticleService.deleteSavedArticleForUser(
+        userId!,
+        articleId
+      );
+      res.status(HTTP_STATUS.OK).json({ message });
+    } catch (err: any) {
       res
         .status(HTTP_STATUS.SERVER_ERROR)
-        .json({ message: MESSAGES.ARTICLE_DELETE_ERROR, error: err });
+        .json({
+          message: err.message || MESSAGES.ARTICLE_DELETE_ERROR,
+          error: err,
+        });
     }
   }
 
@@ -73,8 +57,9 @@ class SavedArticleController {
     const userId = req.user?.id;
 
     try {
-      const saved = await SavedArticle.find({ userId }).populate("articleId");
-      const articles = saved.map((item) => item.articleId);
+      const articles = await SavedArticleService.getSavedArticlesForUser(
+        userId!
+      );
       res.status(HTTP_STATUS.OK).json({ savedArticles: articles });
     } catch (err) {
       res

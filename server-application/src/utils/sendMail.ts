@@ -1,5 +1,4 @@
 import nodemailer from "nodemailer";
-import { ENV } from "../app";
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -7,8 +6,8 @@ const transporter = nodemailer.createTransport({
     user: "physics9358@gmail.com",
     pass: "trzwrbrxgcpxhdiu",
   },
-  logger: true,
-  debug: true,
+  // logger: true,
+  // debug: true,
 });
 
 const sendMail = async ({
@@ -20,9 +19,7 @@ const sendMail = async ({
   subject: string;
   html: string;
 }) => {
-  console.log("hewllo from sendEmail");
-  console.log(process.env.EMAIL_USER);
-  console.log(process.env.EMAIL_PASS);
+
   await transporter.sendMail({
     from: `"NewsBot" <${process.env.EMAIL_USER}>`,
     to,

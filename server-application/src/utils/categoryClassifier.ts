@@ -66,7 +66,6 @@ export const classifyMultipleCategories = (
     const matchCount = keywords.filter((keyword) =>
       lowerText.includes(keyword.toLowerCase())
     ).length;
-    console.log(matchCount);
     if (matchCount >= 1) {
       scoreMap[category] = matchCount;
     }
@@ -77,7 +76,6 @@ export const classifyMultipleCategories = (
     .slice(0, maxCount)
     .map(([category]) => category);
 
-  console.log("Final matched categories:", sortedCategories);
 
   return sortedCategories.length > 0 ? sortedCategories : ["general"];
 };

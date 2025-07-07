@@ -4,6 +4,7 @@ import {
 } from "../utils/categoryClassifier";
 import News from "../models/News";
 import NotificationController from "../controllers/NotificationController";
+import NotificationService from "./NotificationService";
 
 export const fetchAndStoreByCategory = async () => {
   const articles = await fetchNewsFromAPI();
@@ -11,7 +12,7 @@ export const fetchAndStoreByCategory = async () => {
   let count = 0;
 
   for (const article of articles) {
-    const exists = await News.findOne({ title: article.title });
+    const exists = await News.findOne({ url: article.url });
     if (exists) continue;
 
     const textToScan = `${article.title || ""} ${article.description || ""} ${
@@ -19,7 +20,6 @@ export const fetchAndStoreByCategory = async () => {
     }`;
 
     const categories = classifyMultipleCategories(textToScan);
-    console.log(categories);
 
     await News.create({
       title: article.title,
@@ -34,9 +34,7 @@ export const fetchAndStoreByCategory = async () => {
     count++;
   }
 
-  console.log(`Stored ${count} articles.`);
-
-
-  await NotificationController.createNotificationsForNewArticles();
+  await NotificationService.createNotificationsForNewArticles()
+  
   return articles;
 };
