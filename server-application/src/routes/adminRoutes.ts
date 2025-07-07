@@ -35,4 +35,49 @@ router.post(
   AdminController.seedExternalServers
 );
 
+router.get("/settings", authMiddleware,adminOnly, AdminController.getSettings);
+router.put("/settings", authMiddleware,adminOnly, AdminController.updateSettings);
+router.get(
+  "/reported-articles",
+  authMiddleware,
+  adminOnly,
+  AdminController.getReportedArticles
+);
+
+router.post(
+  "/hide-article/:articleId",
+  authMiddleware,
+  adminOnly,
+  AdminController.hideArticle
+);
+
+router.get(
+  "/categories",
+  authMiddleware,
+  adminOnly,
+  AdminController.getAllCategories
+);
+
+router.post(
+  "/hide-categories",
+  authMiddleware,
+  adminOnly,
+  AdminController.hideCategories
+);
+
+router.get(
+  "/blocked-keywords",
+  authMiddleware,
+  adminOnly,
+  AdminController.getBlockedKeywords
+);
+
+router.put(
+  "/blocked-keywords",
+  authMiddleware,
+  adminOnly,
+  AdminController.updateBlockedKeywords
+);
+
+
 export default router;

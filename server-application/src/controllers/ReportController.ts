@@ -1,4 +1,3 @@
-// controllers/ReportController.ts
 import { Request, Response } from "express";
 import Report from "../models/Report";
 import News from "../models/News";

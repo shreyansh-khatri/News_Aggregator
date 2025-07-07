@@ -40,26 +40,41 @@ const SavedArticles: React.FC = () => {
     fetchSaved();
   }, []);
 
+
   return (
-    <div style={{ padding: "1rem" }}>
-      <h2>Saved Articles</h2>
+    <div className="p-4 max-w-3xl mx-auto">
+      <h2 className="text-2xl font-bold mb-4 text-gray-800">Saved Articles</h2>
+
       {loading ? (
-        <p>Loading...</p>
+        <p className="text-gray-500">Loading...</p>
       ) : articles.length === 0 ? (
-        <p>No saved articles found.</p>
+        <p className="text-gray-600">No saved articles found.</p>
       ) : (
         articles.map((article) => (
-          <div key={article._id} style={{ marginBottom: "1rem" }}>
-            <h4>{article.title}</h4>
-            <p>{article.description}</p>
-            <small>{new Date(article.publishedAt).toLocaleString()}</small>
+          <div
+            key={article._id}
+            className="bg-white shadow rounded p-4 mb-4 border border-gray-300"
+          >
+            <h4 className="text-xl font-semibold mb-2 text-gray-800">
+              {article.title}
+            </h4>
+            <p className="text-gray-700 mb-2">{article.description}</p>
+            <small className="text-gray-500">
+              {new Date(article.publishedAt).toLocaleString()}
+            </small>
             <br />
-            <button onClick={() => handleDelete(article._id)}>🗑 Remove</button>
+            <button
+              onClick={() => handleDelete(article._id)}
+              className="mt-2 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+            >
+              🗑 Remove
+            </button>
           </div>
         ))
       )}
     </div>
   );
+
 };
 
 export default SavedArticles;

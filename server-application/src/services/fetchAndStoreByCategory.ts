@@ -3,6 +3,7 @@ import {
   classifyMultipleCategories,
 } from "../utils/categoryClassifier";
 import News from "../models/News";
+import NotificationController from "../controllers/NotificationController";
 
 export const fetchAndStoreByCategory = async () => {
   const articles = await fetchNewsFromAPI();
@@ -34,5 +35,8 @@ export const fetchAndStoreByCategory = async () => {
   }
 
   console.log(`Stored ${count} articles.`);
+
+
+  await NotificationController.createNotificationsForNewArticles();
   return articles;
 };

@@ -32,44 +32,64 @@ const Search: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: "1rem" }}>
-      <h2>🔍 Search News</h2>
-      <div>
+    <div className="p-4 max-w-3xl mx-auto">
+      <h2 className="text-2xl font-bold mb-4 text-gray-800">🔍 Search News</h2>
+
+      <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
         <input
           type="text"
           placeholder="Enter keyword"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
+          className="border rounded px-3 py-2 w-full md:w-auto"
         />
         <input
           type="date"
           value={start}
           onChange={(e) => setStart(e.target.value)}
+          className="border rounded px-3 py-2 w-full md:w-auto"
         />
         <input
           type="date"
           value={end}
           onChange={(e) => setEnd(e.target.value)}
+          className="border rounded px-3 py-2 w-full md:w-auto"
         />
-        <button onClick={handleSearch}>Search</button>
+        <button
+          onClick={handleSearch}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+        >
+          Search
+        </button>
       </div>
 
       {loading ? (
-        <p>Searching...</p>
+        <p className="text-gray-500">Searching...</p>
       ) : (
-        <div style={{ marginTop: "1rem" }}>
-          {results.length === 0 && <p>No articles found</p>}
+        <div className="mt-4">
+          {results.length === 0 && (
+            <p className="text-gray-600">No articles found</p>
+          )}
+
           {results.map((article) => (
-            <div key={article._id} style={{ marginBottom: "1rem" }}>
-              <h4>{article.title}</h4>
-              <p>{article.description}</p>
-              <small>{new Date(article.publishedAt).toLocaleString()}</small>
+            <div
+              key={article._id}
+              className="bg-white shadow rounded p-4 mb-4 border border-gray-300"
+            >
+              <h4 className="text-xl font-semibold mb-2 text-gray-800">
+                {article.title}
+              </h4>
+              <p className="text-gray-700 mb-2">{article.description}</p>
+              <small className="text-gray-500">
+                {new Date(article.publishedAt).toLocaleString()}
+              </small>
             </div>
           ))}
         </div>
       )}
     </div>
   );
+
 };
 
 export default Search;

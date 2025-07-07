@@ -13,11 +13,15 @@ import Headlines from "./pages/Headlines";
 import Search from "./pages/Search";
 import SavedArticles from "./pages/SavedArticles";
 import ConfigureNotifications from "./pages/ConfigureNotifications";
+import Notifications from "./pages/Notification";
 import AdminDashboard from "./pages/AdminDashboard";
 import ServerStatus from "./pages/admin/ServerStatus";
 import ServerDetails from "./pages/admin/ServerDetails";
 import UpdateServer from "./pages/admin/UpdateServer";
 import AddCategory from "./pages/admin/AddCategory";
+import ReportedArticles from "./pages/admin/ReportedArticles";
+import ManageCategories from "./pages/admin/ManageCategories";
+import KeywordFilters from "./pages/admin/KeywordFilters";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem("token");
@@ -39,12 +43,12 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      
       {isLoggedIn && role !== "admin" && (
         <nav style={{ marginBottom: "1rem" }}>
           <Link to="/">Headlines</Link> | <Link to="/search">Search</Link> |{" "}
           <Link to="/saved">Saved Articles</Link> |{" "}
           <Link to="/configure">Configure Notifications</Link> |{" "}
+          <Link to="/notifications">Notifications</Link> |{" "}
           <button
             onClick={() => {
               localStorage.removeItem("token");
@@ -96,6 +100,15 @@ const App: React.FC = () => {
           }
         />
         <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute>
+              <Notifications />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/admin"
           element={
             <ProtectedRoute>
@@ -136,6 +149,10 @@ const App: React.FC = () => {
             </ProtectedRoute>
           }
         />
+
+        <Route path="/admin/reported-articles" element={<ReportedArticles />} />
+        <Route path="/admin/manage-categories" element={<ManageCategories />} />
+        <Route path="/admin/keyword-filters" element={<KeywordFilters />} />
       </Routes>
     </Router>
   );

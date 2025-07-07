@@ -5,13 +5,14 @@ const newsSchema = new mongoose.Schema(
     title: String,
     description: String,
     content: String,
-    // category: String,
     category: { type: [String], default: [] },
     source: String,
     url: { type: String, unique: true },
     publishedAt: Date,
     isHidden: { type: Boolean, default: false },
     reports: { type: Number, default: 0 },
+    likes: { type: Number, default: 0 },
+    dislikes: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

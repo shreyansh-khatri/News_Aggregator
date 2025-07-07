@@ -30,42 +30,40 @@ const ServerDetails: React.FC = () => {
   }, []);
 
   return (
-    <div style={{ padding: "1rem" }}>
-      <h2>External Server Details</h2>
+    <div className="p-6 max-w-3xl mx-auto">
+      <h2 className="text-2xl font-bold mb-4 text-gray-800">
+        External Server Details
+      </h2>
+
       {loading ? (
-        <p>Loading...</p>
+        <p className="text-gray-600">Loading...</p>
       ) : servers.length === 0 ? (
-        <p>No server details found.</p>
+        <p className="text-gray-600">No server details found.</p>
       ) : (
-        <div>
+        <div className="space-y-4">
           {servers.map((server) => (
             <div
               key={server._id}
-              style={{
-                border: "1px solid #ccc",
-                padding: "1rem",
-                marginBottom: "1rem",
-                borderRadius: "5px",
-              }}
+              className="border border-gray-300 rounded p-4 shadow bg-white"
             >
-              <h3>{server.name}</h3>
-              <p>
-                <strong>URL:</strong> {server.baseUrl}
+              <h3 className="text-xl font-semibold mb-2">{server.name}</h3>
+              <p className="mb-1">
+                <span className="font-medium">URL:</span> {server.baseUrl}
               </p>
-              <p>
-                <strong>Status:</strong> {server.status}
+              <p className="mb-1">
+                <span className="font-medium">Status:</span> {server.status}
               </p>
-
-              <small>
-                <strong>Created:</strong>{" "}
+              <p className="text-sm text-gray-500">
+                <span className="font-medium">Created:</span>{" "}
                 {new Date(server.createdAt).toLocaleString()}
-              </small>
+              </p>
             </div>
           ))}
         </div>
       )}
     </div>
   );
+
 };
 
 export default ServerDetails;

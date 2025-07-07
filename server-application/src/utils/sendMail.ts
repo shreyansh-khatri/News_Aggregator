@@ -4,8 +4,8 @@ import { ENV } from "../app";
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: "physics9358@gmail.com",
+    pass: "trzwrbrxgcpxhdiu",
   },
   logger: true,
   debug: true,

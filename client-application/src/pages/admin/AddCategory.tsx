@@ -31,44 +31,43 @@ const AddCategory: React.FC = () => {
     setLoading(false);
   };
 
+
   return (
-    <div style={{ padding: "1rem" }}>
-      <h2>Add New Category</h2>
+    <div className="p-4 max-w-md mx-auto">
+      <h2 className="text-2xl font-bold mb-4 text-gray-800">
+        Add New Category
+      </h2>
 
       <input
         type="text"
         value={category}
         placeholder="Enter new category"
         onChange={(e) => setCategory(e.target.value)}
-        style={{ padding: "0.5rem", width: "100%", maxWidth: "400px" }}
+        className="border rounded px-3 py-2 w-full mb-4"
       />
-
-      <br />
 
       <input
         type="text"
         value={keywords}
         placeholder="Enter keywords (comma separated)"
         onChange={(e) => setKeywords(e.target.value)}
-        style={{
-          padding: "0.5rem",
-          width: "100%",
-          maxWidth: "400px",
-          marginTop: "1rem",
-        }}
+        className="border rounded px-3 py-2 w-full mb-4"
       />
-
-      <br />
 
       <button
         onClick={handleAddCategory}
         disabled={loading}
-        style={{ marginTop: "1rem" }}
+        className={`${
+          loading
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-green-600 hover:bg-green-700"
+        } text-white px-4 py-2 rounded w-full`}
       >
         {loading ? "Saving..." : "Add Category"}
       </button>
     </div>
   );
+
 };
 
 export default AddCategory;

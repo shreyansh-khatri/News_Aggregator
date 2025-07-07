@@ -1,11 +1,14 @@
 import mongoose from "mongoose";
 
-const notificationConfigSchema = new mongoose.Schema({
+const notificationSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  categories: { type: [String], default: [] },
-  keywords: { type: [String], default: [] },
+  articleId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "News",
+    required: true,
+  },
+  isRead: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
 });
 
-export default mongoose.model("Notification", notificationConfigSchema);
+export default mongoose.model("Notification", notificationSchema);

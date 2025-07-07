@@ -42,24 +42,24 @@ const UpdateServer: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: "1rem" }}>
-      <h2>Update External Server</h2>
+    <div className="p-4 max-w-lg mx-auto">
+      <h2 className="text-2xl font-bold mb-4 text-gray-800">
+        Update External Server
+      </h2>
 
       {loading ? (
-        <p>Loading...</p>
+        <p className="text-gray-600">Loading...</p>
       ) : (
-        <div>
-          <label>
+        <div className="mb-4">
+          <label className="block mb-2 text-gray-700">
             Select a server:
             <select
               onChange={(e) => {
-                console.log('dd',e.target.value)
-                console.log(servers)
                 const selected = servers.find((s) => s._id === e.target.value);
-                console.log(selected)
                 setSelectedServer(selected || null);
               }}
               defaultValue=""
+              className="border rounded px-3 py-2 w-full mt-1"
             >
               <option value="" disabled>
                 -- Choose --
@@ -75,38 +75,45 @@ const UpdateServer: React.FC = () => {
       )}
 
       {selectedServer && (
-        <div style={{ marginTop: "1rem" }}>
-          <label>
-            Name:{" "}
+        <div className="bg-white shadow rounded p-4 border border-gray-300">
+          <label className="block mb-4 text-gray-700">
+            Name:
             <input
               type="text"
               value={selectedServer.name}
               onChange={(e) =>
                 setSelectedServer({ ...selectedServer, name: e.target.value })
               }
+              className="border rounded px-3 py-2 w-full mt-1"
             />
           </label>
-          <br />
-          <label>
-            URL:{" "}
+
+          <label className="block mb-4 text-gray-700">
+            URL:
             <input
               type="text"
               value={selectedServer.baseUrl}
               onChange={(e) =>
-                setSelectedServer({ ...selectedServer, baseUrl: e.target.value })
+                setSelectedServer({
+                  ...selectedServer,
+                  baseUrl: e.target.value,
+                })
               }
+              className="border rounded px-3 py-2 w-full mt-1"
             />
           </label>
-          <br />
 
-          <br />
-          <button onClick={handleUpdate} style={{ marginTop: "1rem" }}>
+          <button
+            onClick={handleUpdate}
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded w-full"
+          >
             Update Server
           </button>
         </div>
       )}
     </div>
   );
+
 };
 
 export default UpdateServer;

@@ -6,6 +6,8 @@ interface NewsArticle {
   title: string;
   description: string;
   publishedAt: string;
+  likes: number;
+  dislikes: number;
 }
 
 const Headlines: React.FC = () => {
@@ -47,97 +49,182 @@ const Headlines: React.FC = () => {
     setLoading(false);
   };
 
+  const handleLike = async (articleId: string) => {
+    try {
+      await axios.post(`/news/like/${articleId}`);
+      setArticles((prev) =>
+        prev.map((a) =>
+          a._id === articleId ? { ...a, likes: a.likes + 1 } : a
+        )
+      );
+    } catch (err: any) {
+      alert(err.response?.data?.message || "Failed to like article");
+    }
+  };
+
+  const handleDislike = async (articleId: string) => {
+    try {
+      await axios.post(`/news/dislike/${articleId}`);
+      setArticles((prev) =>
+        prev.map((a) =>
+          a._id === articleId ? { ...a, dislikes: a.dislikes + 1 } : a
+        )
+      );
+    } catch (err: any) {
+      alert(err.response?.data?.message || "Failed to dislike article");
+    }
+  };
+
   useEffect(() => {
     fetchHeadlines();
   }, []);
 
   const handleSave = async (articleId: string) => {
     try {
-      const token = localStorage.getItem("token");
-
-      const res = await axios.post("/saved/save", { articleId });
-      alert(" Article saved!");
+      await axios.post("/saved/save", { articleId });
+      alert("Article saved!");
     } catch (err: any) {
       alert(err.response?.data?.message || "Failed to save article");
     }
   };
 
+  const handleReport = async (articleId: string) => {
+    try {
+      await axios.post(`/news/report/${articleId}`);
+      alert("Article reported!");
+    } catch (err: any) {
+      alert(err.response?.data?.message || "Failed to report article");
+    }
+  };
+
   return (
-    <div style={{ padding: "1rem" }}>
-      <h2>Headlines</h2>
-      <div>
-        <h3>Filter Headlines</h3>
+    <div className="p-4 max-w-4xl mx-auto">
+      <h2 className="text-2xl font-bold mb-4 text-gray-800">Headlines</h2>
 
-        <label>
-          <input
-            type="radio"
-            name="dateOption"
-            value="none"
-            checked={dateOption === "none"}
-            onChange={() => setDateOption("none")}
-          />
-          All Dates
-        </label>
+      <div className="bg-white shadow rounded p-4 mb-6">
+        <h3 className="text-lg font-semibold mb-3 text-gray-700">
+          Filter Headlines
+        </h3>
 
-        <label>
-          <input
-            type="radio"
-            name="dateOption"
-            value="today"
-            checked={dateOption === "today"}
-            onChange={() => setDateOption("today")}
-          />
-          Today
-        </label>
-
-        <label>
-          <input
-            type="radio"
-            name="dateOption"
-            value="range"
-            checked={dateOption === "range"}
-            onChange={() => setDateOption("range")}
-          />
-          Date Range
-        </label>
+        <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
+          <label className="flex items-center gap-2 text-gray-600">
+            <input
+              type="radio"
+              name="dateOption"
+              value="none"
+              checked={dateOption === "none"}
+              onChange={() => setDateOption("none")}
+            />
+            All Dates
+          </label>
+          <label className="flex items-center gap-2 text-gray-600">
+            <input
+              type="radio"
+              name="dateOption"
+              value="today"
+              checked={dateOption === "today"}
+              onChange={() => setDateOption("today")}
+            />
+            Today
+          </label>
+          <label className="flex items-center gap-2 text-gray-600">
+            <input
+              type="radio"
+              name="dateOption"
+              value="range"
+              checked={dateOption === "range"}
+              onChange={() => setDateOption("range")}
+            />
+            Date Range
+          </label>
+        </div>
 
         {dateOption === "range" && (
-          <>
+          <div className="flex flex-col md:flex-row gap-4 mb-4">
             <input
               type="date"
               value={start}
               onChange={(e) => setStart(e.target.value)}
+              className="border rounded px-3 py-2 w-full md:w-auto"
             />
             <input
               type="date"
               value={end}
               onChange={(e) => setEnd(e.target.value)}
+              className="border rounded px-3 py-2 w-full md:w-auto"
             />
-          </>
+          </div>
         )}
 
-        <select value={category} onChange={(e) => setCategory(e.target.value)}>
-          <option value="all">All</option>
-          <option value="business">Business</option>
-          <option value="entertainment">Entertainment</option>
-          <option value="sports">Sports</option>
-          <option value="technology">Technology</option>
-        </select>
+        <div className="flex flex-col md:flex-row gap-4 items-center">
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="border rounded px-3 py-2 w-full md:w-auto"
+          >
+            <option value="all">All</option>
+            <option value="business">Business</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="sports">Sports</option>
+            <option value="technology">Technology</option>
+          </select>
 
-        <button onClick={fetchHeadlines}>Apply Filters</button>
+          <button
+            onClick={fetchHeadlines}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+          >
+            Apply Filters
+          </button>
+        </div>
       </div>
 
-      {loading && <p>Loading...</p>}
+      {loading && <p className="text-gray-500">Loading...</p>}
+
       {articles.map((article) => (
-        <div key={article._id} style={{ marginBottom: "1rem" }}>
-          <h4>{article.title}</h4>
-          <p>{article.description}</p>
-          <button onClick={() => handleSave(article._id)}>Save</button>
-          <small>{new Date(article.publishedAt).toLocaleString()}</small>
+        <div
+          key={article._id}
+          className="bg-white shadow rounded p-4 mb-4 border border-gray-300"
+        >
+          <h4 className="text-xl font-semibold mb-2 text-gray-800">
+            {article.title}
+          </h4>
+          <p className="text-gray-700 mb-4">{article.description}</p>
+
+          <div className="flex flex-wrap gap-2 mb-2">
+            <button
+              onClick={() => handleSave(article._id)}
+              className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded"
+            >
+              Save
+            </button>
+            <button
+              onClick={() => handleReport(article._id)}
+              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+            >
+              Report
+            </button>
+            <button
+              onClick={() => handleLike(article._id)}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded"
+            >
+              👍 {article.likes}
+            </button>
+            <button
+              onClick={() => handleDislike(article._id)}
+              className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded"
+            >
+              👎 {article.dislikes}
+            </button>
+          </div>
+
+          <small className="text-gray-500">
+            {new Date(article.publishedAt).toLocaleString()}
+          </small>
         </div>
       ))}
     </div>
   );
+
 };
 
 export default Headlines;

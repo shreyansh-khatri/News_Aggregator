@@ -33,25 +33,37 @@ const Login: React.FC<Props> = ({ onLoginSuccess }) => {
    }
  };
 
+
   return (
-    <div>
-      <h2>Login</h2>
+    <div className="p-4 max-w-sm mx-auto">
+      <h2 className="text-2xl font-bold mb-4 text-gray-800 text-center">
+        Login
+      </h2>
+
       <input
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        className="border rounded px-3 py-2 w-full mb-4"
       />
-      <br />
+
       <input
         placeholder="Password"
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        className="border rounded px-3 py-2 w-full mb-4"
       />
-      <br />
-      <button onClick={handleLogin}>Login</button>
+
+      <button
+        onClick={handleLogin}
+        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded w-full"
+      >
+        Login
+      </button>
     </div>
   );
+
 };
 
 export default Login;
