@@ -8,6 +8,8 @@ interface NewsArticle {
   publishedAt: string;
   likes: number;
   dislikes: number;
+  userReaction?: "like" | "dislike";
+  url: string; 
 }
 
 const Headlines: React.FC = () => {
@@ -54,7 +56,15 @@ const Headlines: React.FC = () => {
       await axios.post(`/news/like/${articleId}`);
       setArticles((prev) =>
         prev.map((a) =>
-          a._id === articleId ? { ...a, likes: a.likes + 1 } : a
+          a._id === articleId
+            ? {
+                ...a,
+                likes: a.userReaction === "like" ? a.likes - 1 : a.likes + 1,
+                dislikes:
+                  a.userReaction === "dislike" ? a.dislikes - 1 : a.dislikes,
+                userReaction: a.userReaction === "like" ? undefined : "like",
+              }
+            : a
         )
       );
     } catch (err: any) {
@@ -67,7 +77,18 @@ const Headlines: React.FC = () => {
       await axios.post(`/news/dislike/${articleId}`);
       setArticles((prev) =>
         prev.map((a) =>
-          a._id === articleId ? { ...a, dislikes: a.dislikes + 1 } : a
+          a._id === articleId
+            ? {
+                ...a,
+                dislikes:
+                  a.userReaction === "dislike"
+                    ? a.dislikes - 1
+                    : a.dislikes + 1,
+                likes: a.userReaction === "like" ? a.likes - 1 : a.likes,
+                userReaction:
+                  a.userReaction === "dislike" ? undefined : "dislike",
+              }
+            : a
         )
       );
     } catch (err: any) {
@@ -188,7 +209,18 @@ const Headlines: React.FC = () => {
           <h4 className="text-xl font-semibold mb-2 text-gray-800">
             {article.title}
           </h4>
-          <p className="text-gray-700 mb-4">{article.description}</p>
+          <p className="text-gray-700 mb-2">{article.description}</p>
+
+          {article.url && (
+            <a
+              href={article.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline mb-2 block"
+            >
+              Read full article
+            </a>
+          )}
 
           <div className="flex flex-wrap gap-2 mb-2">
             <button
@@ -205,13 +237,21 @@ const Headlines: React.FC = () => {
             </button>
             <button
               onClick={() => handleLike(article._id)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded"
+              className={`px-3 py-1 rounded text-white ${
+                article.userReaction === "like"
+                  ? "bg-blue-800"
+                  : "bg-blue-600 hover:bg-blue-700"
+              }`}
             >
               👍 {article.likes}
             </button>
             <button
               onClick={() => handleDislike(article._id)}
-              className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded"
+              className={`px-3 py-1 rounded text-white ${
+                article.userReaction === "dislike"
+                  ? "bg-gray-800"
+                  : "bg-gray-600 hover:bg-gray-700"
+              }`}
             >
               👎 {article.dislikes}
             </button>
@@ -224,7 +264,6 @@ const Headlines: React.FC = () => {
       ))}
     </div>
   );
-
 };
 
 export default Headlines;

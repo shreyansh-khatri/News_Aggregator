@@ -1,8 +1,6 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import NotificationController from "../controllers/NotificationController";
 import authMiddleware from "../utils/authMiddleware";
-import News from "../models/News";
-
 const router = express.Router();
 
 router.put(

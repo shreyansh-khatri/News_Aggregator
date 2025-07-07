@@ -7,40 +7,139 @@ import { HTTP_STATUS, MESSAGES } from "../constants/constants";
 import { AuthenticatedRequest } from "../utils/authMiddleware";
 import Reaction from "../models/Reaction";
 import { buildPersonalizedQuery } from "../utils/personalization";
+import mongoose from "mongoose";
 
 class NewsController {
+  //   async getHeadlines(req: Request, res: Response) {
+  //     try {
+  //       const query = await buildNewsFilterQuery(req.query);
+  //       const headlines = await News.find(query).sort({ publishedAt: -1 });
+  // console.log(headlines.length)
+  //       res.json({ headlines });
+  //     } catch (err) {
+  //       res
+  //         .status(500)
+  //         .json({ message: "Failed to fetch headlines", error: err });
+  //     }
+  //   }
+
+  async searchNews(req: Request, res: Response) {
+    try {
+      const { keyword, start, end } = req.query;
+
+      const query: any = {
+        isHidden: false,
+      };
+
+      if (start && end) {
+        const startDate = new Date(start as string);
+        const endDate = new Date(end as string);
+        endDate.setDate(endDate.getDate() + 1); 
+
+        query.publishedAt = { $gte: startDate, $lt: endDate };
+      }
+
+      if (keyword) {
+       const regex = new RegExp(`\\b${keyword}\\b`, "i");
+        query.$or = [
+          { title: regex },
+          { description: regex },
+          { content: regex },
+        ];
+      }
+
+      const results = await News.find(query).sort({ publishedAt: -1 });
+
+      res.json({ results });
+    } catch (err) {
+      console.error("Search error:", err);
+      res.status(500).json({ message: "Failed to search news", error: err });
+    }
+  }
+
   async getHeadlines(req: AuthenticatedRequest, res: Response) {
     const userId = req.user?.id;
 
     try {
       let headlines;
 
-      if (userId) {
-        const personalizedQuery = await buildPersonalizedQuery(userId);
-        headlines = await News.find(personalizedQuery)
-          .sort({ publishedAt: -1 })
-          .limit(50);
-      } else {
-        const query = await buildNewsFilterQuery(req.query);
-        headlines = await News.find(query).sort({ publishedAt: -1 }).limit(50);
-      }
+      const personalizedQuery = userId
+        ? await buildPersonalizedQuery(userId)
+        : await buildNewsFilterQuery(req.query);
+
+      headlines = await News.aggregate([
+        { $match: personalizedQuery },
+        {
+          $lookup: {
+            from: "reactions",
+            localField: "_id",
+            foreignField: "articleId",
+            as: "reactions",
+          },
+        },
+        {
+          $addFields: {
+            likes: {
+              $size: {
+                $filter: {
+                  input: "$reactions",
+                  as: "r",
+                  cond: { $eq: ["$$r.type", "like"] },
+                },
+              },
+            },
+            dislikes: {
+              $size: {
+                $filter: {
+                  input: "$reactions",
+                  as: "r",
+                  cond: { $eq: ["$$r.type", "dislike"] },
+                },
+              },
+            },
+            userReaction: userId
+              ? {
+                  $let: {
+                    vars: {
+                      reaction: {
+                        $arrayElemAt: [
+                          {
+                            $filter: {
+                              input: "$reactions",
+                              as: "r",
+                              cond: {
+                                $eq: [
+                                  "$$r.userId",
+                                  new mongoose.Types.ObjectId(userId),
+                                ],
+                              },
+                            },
+                          },
+                          0,
+                        ],
+                      },
+                    },
+                    in: "$$reaction.type",
+                  },
+                }
+              : null,
+          },
+        },
+        {
+          $project: {
+            reactions: 0,
+          },
+        },
+        { $sort: { publishedAt: -1 } },
+        { $limit: 50 },
+      ]);
+
       res.json({ headlines });
     } catch (err) {
       console.error(err);
       res
         .status(500)
         .json({ message: "Failed to fetch headlines", error: err });
-    }
-  }
-
-  async searchNews(req: Request, res: Response) {
-    try {
-      const query = await buildNewsFilterQuery(req.query);
-      const results = await News.find(query).sort({ publishedAt: -1 });
-
-      res.json({ results });
-    } catch (err) {
-      res.status(500).json({ message: "Failed to search news", error: err });
     }
   }
 

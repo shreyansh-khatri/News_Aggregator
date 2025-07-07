@@ -94,7 +94,6 @@ class AdminController {
 
   async getReportedArticles(req: Request, res: Response) {
     try {
-      console.log("callecd");
       const reportedArticles = await News.find({
         reports: { $gt: 0 },
         isHidden: false,

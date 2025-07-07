@@ -6,6 +6,7 @@ interface NewsArticle {
   title: string;
   description: string;
   publishedAt: string;
+  url: string; 
 }
 
 const Search: React.FC = () => {
@@ -80,6 +81,18 @@ const Search: React.FC = () => {
                 {article.title}
               </h4>
               <p className="text-gray-700 mb-2">{article.description}</p>
+
+              {article.url && (
+                <a
+                  href={article.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline mb-2 block"
+                >
+                  Read full article
+                </a>
+              )}
+
               <small className="text-gray-500">
                 {new Date(article.publishedAt).toLocaleString()}
               </small>
@@ -89,7 +102,6 @@ const Search: React.FC = () => {
       )}
     </div>
   );
-
 };
 
 export default Search;

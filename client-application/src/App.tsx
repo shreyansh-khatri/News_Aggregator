@@ -22,6 +22,7 @@ import AddCategory from "./pages/admin/AddCategory";
 import ReportedArticles from "./pages/admin/ReportedArticles";
 import ManageCategories from "./pages/admin/ManageCategories";
 import KeywordFilters from "./pages/admin/KeywordFilters";
+import Navbar from "./components/Navbar";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem("token");
@@ -44,21 +45,7 @@ const App: React.FC = () => {
   return (
     <Router>
       {isLoggedIn && role !== "admin" && (
-        <nav style={{ marginBottom: "1rem" }}>
-          <Link to="/">Headlines</Link> | <Link to="/search">Search</Link> |{" "}
-          <Link to="/saved">Saved Articles</Link> |{" "}
-          <Link to="/configure">Configure Notifications</Link> |{" "}
-          <Link to="/notifications">Notifications</Link> |{" "}
-          <button
-            onClick={() => {
-              localStorage.removeItem("token");
-              localStorage.removeItem("role");
-              handleLoginStatusChange();
-            }}
-          >
-            Logout
-          </button>
-        </nav>
+        <Navbar handleLoginStatusChange={handleLoginStatusChange} />
       )}
 
       <Routes>
@@ -66,7 +53,11 @@ const App: React.FC = () => {
           path="/login"
           element={<Login onLoginSuccess={handleLoginStatusChange} />}
         />
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="/register"
+          element={<Register onRegisterSuccess={handleLoginStatusChange} />}
+        />
+
         <Route
           path="/"
           element={

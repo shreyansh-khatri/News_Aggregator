@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import axios from "../api/axiosInstance";
 import { useNavigate } from "react-router-dom";
 
-const Register: React.FC = () => {
+interface RegisterProps {
+  onRegisterSuccess: () => void;
+}
+
+const Register: React.FC<RegisterProps> = ({ onRegisterSuccess }) => {
   const [form, setForm] = useState({
     username: "",
     email: "",
@@ -23,7 +27,8 @@ const Register: React.FC = () => {
       const token = res.data.token;
       if (token) {
         localStorage.setItem("token", token);
-        navigate("/"); 
+        onRegisterSuccess(); 
+        navigate("/");
       } else {
         setMessage("Registered, but no token received.");
       }
@@ -31,7 +36,6 @@ const Register: React.FC = () => {
       setMessage(err.response?.data?.message || "Registration failed");
     }
   };
-
 
   return (
     <div className="p-4 max-w-sm mx-auto">
@@ -74,7 +78,25 @@ const Register: React.FC = () => {
       {message && <p className="mt-4 text-red-600">{message}</p>}
     </div>
   );
-
 };
 
 export default Register;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
